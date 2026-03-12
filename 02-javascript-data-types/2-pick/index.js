@@ -4,6 +4,7 @@
  * @param {...string} fields - the properties paths to pick
  * @returns {object} - returns the new object
  */
+
 const fruits = {
  apple: 2,
  orange: 4,
@@ -21,4 +22,3 @@ export const pick = (obj, ...fields) => {
 
 
 console.log(pick(fruits, 'apple', 'banana')); // { apple: 2, banana: 3 }
-
