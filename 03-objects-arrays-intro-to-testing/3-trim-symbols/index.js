@@ -25,3 +25,4 @@ export function trimSymbols(string, size) {
     }
     return res.join('');
 }
+
