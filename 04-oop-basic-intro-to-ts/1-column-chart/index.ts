@@ -10,7 +10,7 @@ interface Options {
 
 export default class ColumnChart {
 
-    public element: HTMLElement;
+    public element: HTMLElement | undefined;
     public chartHeight: number = 50;
     public data: number[];
     public label: string;
