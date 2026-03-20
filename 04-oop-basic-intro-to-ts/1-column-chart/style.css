@@ -97,6 +97,7 @@ body {
   flex-direction: row;
   justify-content: space-between;
   margin-bottom: 8px;
+  text-transform: capitalize;
 }
 
 .column-chart__link {
