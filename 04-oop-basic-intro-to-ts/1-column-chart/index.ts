@@ -12,16 +12,16 @@ export default class ColumnChart {
 
     public element: HTMLElement | undefined;
     public chartHeight: number = 50;
-    public data: number[];
-    public label: string;
-    public value: number;
-    public link: string;
-    public formatHeading: (data: number) => string = (data) => `${data}`;
+    private data: number[];
+    private label: string;
+    private value: number;
+    private link: string;
+    private formatHeading: (data: number) => string = (data) => `${data}`;
 
     constructor( { data = [], label = '', value = 0, link = '', formatHeading = (data: number) => `${data}` }: Partial<Options> = {} ) {
       this.data = data;
       this.label = label;
-      this.value = value;
+      this.value = formatHeading(value);
       this.link = link;
       this.formatHeading = formatHeading;
       this.update();
@@ -31,28 +31,29 @@ export default class ColumnChart {
 
     update(data?: number[]) {
       if (data) this.data = data;
-
+      // if (!this.data.length) return '';
+      
       const res = (data: number[]) => {
         const maxValue = Math.max(...this.data);
         const scale = this.chartHeight / maxValue;
         return data.map( item => {
             const value = Math.floor(item * scale);
-            const percent = `${ Math.round(item / maxValue * 100).toFixed(0) }%`;
+            const percent = `${ (item / maxValue * 100).toFixed(0) }%`;
             return { value, percent };
         } );
       };
 
-      const isLoading = (!this.value || this.data.length === 0) ? ' column-chart_loading' : '';
+      const isLoading = ( this.data.length === 0) ? ' column-chart_loading' : '';
 
       this.element = createElement(`
         <div class="column-chart${isLoading}" style="--chart-height: ${this.chartHeight}">
           <div class="column-chart__title">
-            ${this.label}
-            ${this.link ? '<a href="' + this.link + '" class="column-chart__link">Подробнее</a>' : '' }
+            Total ${this.label}
+            ${this.link ? '<a href="' + this.link + '" class="column-chart__link">View all</a>' : '' }
           </div>
           <div class="column-chart__container">
             <div data-element="header" class="column-chart__header">
-              ${this.value ? this.formatHeading(this.value) : this.value }
+              ${ this.value ? this.value : '' }
             </div>
             <div data-element="body" class="column-chart__chart">
               ${ res(this.data).map( (item, i) => `<div title="${this.data[i]}" style="--value: ${item.value}" data-tooltip="${item.percent}"></div>` ).join('') }
