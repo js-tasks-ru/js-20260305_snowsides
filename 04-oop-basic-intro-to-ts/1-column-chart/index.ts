@@ -21,7 +21,7 @@ export default class ColumnChart {
     constructor( { data = [], label = '', value = 0, link = '', formatHeading = (data: number) => `${data}` }: Partial<Options> = {} ) {
       this.data = data;
       this.label = label;
-      this.value = formatHeading(value);
+      this.value = value;
       this.link = link;
       this.formatHeading = formatHeading;
       this.update();
@@ -53,7 +53,7 @@ export default class ColumnChart {
           </div>
           <div class="column-chart__container">
             <div data-element="header" class="column-chart__header">
-              ${ this.value ? this.value : '' }
+              ${ this.value ? this.formatHeading(this.value) : '' }
             </div>
             <div data-element="body" class="column-chart__chart">
               ${ res(this.data).map( (item, i) => `<div title="${this.data[i]}" style="--value: ${item.value}" data-tooltip="${item.percent}"></div>` ).join('') }
