@@ -10,15 +10,15 @@ interface Options {
 }
 
 export default class NotificationMessage {
-  static activeNotification: NotificationMessage;
+  static activeNotification: NotificationMessage | null = null;
   public element: HTMLElement | undefined;
   public target: HTMLElement | undefined;
-  private message: string;
+  public message: string;
   private options: { duration: number; type: string } = { duration: 0, type: 'success' };
 
-  constructor( message: string, options: { duration: number; type: string } ) {
+  constructor( message: string, options: { duration: number; type?: string } = { duration: 0 } ) {
     this.message = message;
-    this.options = options;
+    this.options = { duration: options.duration || 0, type: options.type || 'success' };
     if (NotificationMessage.activeNotification) {
       NotificationMessage.activeNotification.remove();
     }
@@ -29,7 +29,7 @@ export default class NotificationMessage {
   show( target?: HTMLElement ) {
     this.target = target;
 
-    if( document.body.contains(this.element) ) {
+    if( this.element && document.body.contains(this.element) ) {
       this.element.remove();
     }
 
@@ -47,10 +47,12 @@ export default class NotificationMessage {
       </div>
     `);
     
-    if(target instanceof HTMLElement) {
-      target.append(this.element);
-    } else {
-      document.body.append( this.element );
+    if (this.element) {
+      if(target instanceof HTMLElement) {
+        target.append(this.element);
+      } else {
+        document.body.append(this.element);
+      }
     }
   
     if (this.options?.duration) {
