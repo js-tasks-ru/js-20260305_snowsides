@@ -14,9 +14,9 @@ export default class NotificationMessage {
   public element: HTMLElement | undefined;
   public target: HTMLElement | undefined;
   public message: string;
-  private options: { duration: number; type: string } = { duration: 0, type: 'success' };
+  private options: { duration?: number; type?: string } = { duration: 0, type: 'success' };
 
-  constructor( message: string, options: { duration: number; type?: string } = { duration: 0 } ) {
+  constructor( message: string, options: { duration?: number; type?: string } = {} ) {
     this.message = message;
     this.options = { duration: options.duration || 0, type: options.type || 'success' };
     if (NotificationMessage.activeNotification) {
