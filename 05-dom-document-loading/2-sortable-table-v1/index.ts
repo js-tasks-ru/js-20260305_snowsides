@@ -20,9 +20,12 @@ export default class SortableTable {
   public sortType: 'string' | 'number' = 'string';
   public template: (value: string | number) => string = (value) => `<div class="sortable-table__cell">${value}</div>`;
   public subElements: Record<string, HTMLElement> = {};
-  public sortFunctions: Record<string, (a: string | number, b: string | number) => number> = {
-    string: (a: string, b: string) => a.localeCompare(b, ['ru', 'en'], { caseFirst: 'upper' }),
-    number: (a: number, b: number) => a - b
+  public sortFunctions: {
+    string: (a: string, b: string) => number;
+    number: (a: number, b: number) => number;
+  } = {
+    string: (a, b) => a.localeCompare(b, ['ru', 'en'], { caseFirst: 'upper' }),
+    number: (a, b) => a - b
   };
   public sortTypes: Record<string, 'string' | 'number'> = {};
   public defaultTemplate: (value: string | number) => string = (value) => `<div class="sortable-table__cell">${value}</div>`;
@@ -54,15 +57,18 @@ export default class SortableTable {
 
     if (!column || !column.sortable) return;
     
-    const sortType = column.sortType || 'string';
-    const sortFunction = this.sortFunctions[sortType];
-    
-    const sortedData = [...this.data].sort( (a, b) => {
-      const val1 = a[field];
-      const val2 = b[field];
-      const comparison = sortFunction(val1, val2);
-      return order === 'asc' ? comparison : -comparison;
-    } );
+    const sortType = column.sortType ?? 'string';
+
+  const sortedData = [...this.data].sort((a, b) => {
+    const val1 = a[field];
+    const val2 = b[field];
+
+    if (sortType === 'number') {
+      return order === 'asc' ? this.sortFunctions.number(Number(val1), Number(val2)) : -this.sortFunctions.number(Number(val1), Number(val2));
+    }
+
+    return order === 'asc' ? this.sortFunctions.string(String(val1), String(val2)): -this.sortFunctions.string(String(val1), String(val2));
+  });
 
     this.updateTableBody(sortedData);
   }
@@ -122,10 +128,13 @@ export default class SortableTable {
 
   onHeaderClick = (event: MouseEvent) => {
     const target = event.target as HTMLElement;
-    const columnElement = target.closest('.sortable-table__cell') as HTMLElement;
+    const columnElement = target.closest('.sortable-table__cell') as HTMLElement | null;
+
     if (!columnElement) return;
 
     const field = columnElement.dataset.id;
+
+
     const sortable = columnElement.dataset.sortable === 'true';
     if (!field || !sortable) return;
     
