@@ -108,15 +108,14 @@ export default class SortableTable {
       </a>
     `;
   }
-  
+
   getSubElements(element: HTMLElement): Record<string, HTMLElement> {
-    const elements: Record<string, HTMLElement> = {};
-    const subElements = element.querySelectorAll('[data-element]');
-    subElements.forEach(subElement => {
-      const name = subElement.dataset.element;
-      if (name) elements[name] = subElement as HTMLElement;
-    });
-    return elements;
+    const elements = element.querySelectorAll<HTMLElement>('[data-element]');
+    return [...elements].reduce((acc, subElement) => {
+      const name = subElement.dataset.element as string;
+      acc[name] = subElement;
+      return acc;
+    }, {} as Record<string, HTMLElement>);
   }
   
   addEventListeners() {
