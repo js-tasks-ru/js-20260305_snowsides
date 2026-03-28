@@ -184,7 +184,7 @@ export default class SortableTable {
     
   onHeaderClick = (event: MouseEvent) => {
     const target = event.target as HTMLElement;
-    const columnElement = target.closest('.sortable-table__cell') as HTMLElement | null;
+    const columnElement = target.closest<HTMLElement>('.sortable-table__cell');
 
     if (!columnElement) return;
     const field = columnElement.dataset.id;
