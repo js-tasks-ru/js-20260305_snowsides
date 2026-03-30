@@ -11,6 +11,7 @@ export default class Tooltip {
   initialize() {
     document.addEventListener('pointerover', this.onPointerOver);
     document.addEventListener('pointerout', this.onPointerOut);
+    document.addEventListener('pointermove', this.onPointerMove);
   }
 
   render(text: string) {
@@ -33,9 +34,16 @@ export default class Tooltip {
     this.element?.remove();
   }
 
+  onPointerMove = (event: PointerEvent) => {
+    if (!this.element) return;
+    this.element.style.cssText = `position: fixed; left: ${event.clientX + 10}px; top: ${event.clientY + 10}px;`;
+  }
+  
+
   destroy() {
     document.removeEventListener('pointerover', this.onPointerOver);
     document.removeEventListener('pointerout', this.onPointerOut);
+    document.removeEventListener('pointermove', this.onPointerMove);
     this.element?.remove();
     instance = null;
   }
